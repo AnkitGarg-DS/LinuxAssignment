@@ -64,11 +64,60 @@
 
 ## Task 2 – Users & Access
 - Users: `Sarah` (home `/home/Sarah`), `Mike` (home `/home/Mike`)
+  ```bash
+    # Sarah
+    useradd -m -d /home/Sarah Sarah
+    passwd Sarah   # set a strong password
+    
+    # Mike
+    useradd -m -d /home/Mike Mike
+    passwd Mike    # set a strong password
+
 - Workspaces: `/home/Sarah/workspace`, `/home/Mike/workspace` with `chmod 700`
+    ```bash
+      mkdir -p /home/Sarah/workspace
+      mkdir -p /home/mike/workspace
+      
+      chown -R Sarah:Sarah /home/Sarah
+      chown -R mike:mike   /home/mike
+      
+      chmod 700 /home/Sarah/workspace
+      chmod 700 /home/mike/workspace
+      
+      # verify
+      ls -ld /home/Sarah/workspace /home/mike/workspace
+
 - Password policy:
   - `/etc/login.defs`: `PASS_MAX_DAYS=30`, `PASS_MIN_DAYS=7`, `PASS_WARN_AGE=7`
+      ```bash
+          vi /etc/login.defs
+      
+      Set these values
+        PASS_MAX_DAYS   30   # must change every 30 days
+        PASS_MIN_DAYS   7    # minimum 7 days before next change
+        PASS_WARN_AGE   7    # warn 7 days before expiry
+
   - `chage` applied to both users
+      ```bash
+        chage -M 30 -m 7 -W 7 Sarah
+        chage -M 30 -m 7 -W 7 Mike
+        chage -l Sarah   # verify
+        chage -l Mike
+      
   - Complexity in `/etc/security/pwquality.conf`: `minlen=8`, `dcredit=-1`, `ucredit=-1`, `lcredit=-1`, `ocredit=-1`
+    ```bash
+      yum install -y libpwquality
+
+    ```bash
+      vi /etc/security/pwquality.conf
+
+    Set
+      minlen = 8
+      dcredit = -1   # require at least 1 digit
+      ucredit = -1   # require at least 1 uppercase
+      lcredit = -1   # require at least 1 lowercase
+      ocredit = -1   # require at least 1 special char
+
  
 ## Task 3 – Backups
 - Backup dir: `/backups/`
