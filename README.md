@@ -92,7 +92,7 @@
       ```bash
           vi /etc/login.defs
       
-      Set these values
+  ### Set these values
         PASS_MAX_DAYS   30   # must change every 30 days
         PASS_MIN_DAYS   7    # minimum 7 days before next change
         PASS_WARN_AGE   7    # warn 7 days before expiry
