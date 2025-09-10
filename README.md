@@ -120,13 +120,88 @@
  
 ## Task 3 – Backups
 - Backup dir: `/backups/`
+  ```bash
+    mkdir -p /backups
+    chmod 755 /backups
+    ls -ld /backups
+
 - Scripts:
   - Apache: `/usr/local/bin/apache_backup.sh` → `/etc/httpd/` + `/var/www/html/`
+    ```bash
+    cat /usr/local/bin/apache_backup.sh << 'EOF'
+    #!/bin/bash
+    set -euo pipefail
+    
+    DATE=$(date +"%Y-%m-%d")
+    BACKUP="/backups/apache_backup_${DATE}.tar.gz"
+    VERIFY_LOG="/backups/apache_backup_${DATE}.log"
+    
+    # Create compressed archive of config + document root
+    tar -czf "$BACKUP" /etc/httpd/ /var/www/html/
+    
+    # Verify the archive by listing its contents
+    {
+      echo "Apache backup verification for $DATE"
+      echo "Archive: $BACKUP"
+      tar -tzf "$BACKUP" | head -20
+      echo "..."
+      echo "Total files in archive: $(tar -tzf "$BACKUP" | wc -l)"
+      echo "SHA256: $(sha256sum "$BACKUP" | awk '{print $1}')"
+    } > "$VERIFY_LOG"
+    
+    echo "Backup complete: $BACKUP"
+    echo "Verification log: $VERIFY_LOG"
+    EOF
+    
+    chmod +x /usr/local/bin/apache_backup.sh
+
   - Nginx:  `/usr/local/bin/nginx_backup.sh` → `/etc/nginx/` + `/usr/share/nginx/html/`
+      ```bash
+      cat /usr/local/bin/nginx_backup.sh << 'EOF'
+      #!/bin/bash
+      set -euo pipefail
+      
+      DATE=$(date +"%Y-%m-%d")
+      BACKUP="/backups/nginx_backup_${DATE}.tar.gz"
+      VERIFY_LOG="/backups/nginx_backup_${DATE}.log"
+      
+      tar -czf "$BACKUP" /etc/nginx/ /usr/share/nginx/html/
+      
+      {
+        echo "Nginx backup verification for $DATE"
+        echo "Archive: $BACKUP"
+        tar -tzf "$BACKUP" | head -20
+        echo "..."
+        echo "Total files in archive: $(tar -tzf "$BACKUP" | wc -l)"
+        echo "SHA256: $(sha256sum "$BACKUP" | awk '{print $1}')"
+      } > "$VERIFY_LOG"
+      
+      echo "Backup complete: $BACKUP"
+      echo "Verification log: $VERIFY_LOG"
+      EOF
+      
+      chmod +x /usr/local/bin/nginx_backup.sh
+
 - Sudoers: `/etc/sudoers.d/web-backups` to allow only these scripts
+    ```bash
+        visudo -f /etc/sudoers.d/web-backups
+### Paste:
+        Sarah ALL=(root) NOPASSWD: /usr/local/bin/apache_backup.sh
+        Mike  ALL=(root) NOPASSWD: /usr/local/bin/nginx_backup.sh
+
 - Crons:
   - Sarah: `0 0 * * 2 sudo /usr/local/bin/apache_backup.sh`
+    ```bash
+      crontab -u Sarah -e
+      # add this line, save & exit
+      0 0 * * 2 sudo /usr/local/bin/apache_backup.sh
+
   - Mike:  `0 0 * * 2 sudo /usr/local/bin/nginx_backup.sh`
+      ```bash
+      crontab -u mike -e
+      # add this line, save & exit
+      0 0 * * 2 sudo /usr/local/bin/nginx_backup.sh
+
 - Output:
   - Archives: `/backups/apache_backup_2025-09-10.tar.gz`, `/backups/nginx_backup_2025-09-10.tar.gz`
   - Logs: `/backups/apache_backup_2025-09-10.log`, `/backups/nginx_backup_2025-09-10.log` (contains file listing + SHA256)
