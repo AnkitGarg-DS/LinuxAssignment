@@ -92,7 +92,7 @@
       ```bash
           vi /etc/login.defs
       
-  ### Set these values
+  - Set these values
         PASS_MAX_DAYS   30   # must change every 30 days
         PASS_MIN_DAYS   7    # minimum 7 days before next change
         PASS_WARN_AGE   7    # warn 7 days before expiry
@@ -110,7 +110,7 @@
 
       vi /etc/security/pwquality.conf
 
-  Set
+  - Set
     minlen = 8
     dcredit = -1   # require at least 1 digit
     ucredit = -1   # require at least 1 uppercase
@@ -185,7 +185,7 @@
 - Sudoers: `/etc/sudoers.d/web-backups` to allow only these scripts
     ```bash
         visudo -f /etc/sudoers.d/web-backups
-### Paste:
+- Paste:
         Sarah ALL=(root) NOPASSWD: /usr/local/bin/apache_backup.sh
         Mike  ALL=(root) NOPASSWD: /usr/local/bin/nginx_backup.sh
 
