@@ -7,10 +7,60 @@
 
 ## Task 1 – Monitoring
 - Installed: `epel-release`, `htop`, `nmon`
+  ```bash
+  yum install -y epel-release     # enables EPEL repo (htop/nmon live here)
+  yum install -y htop nmon
+
 - Disk Monitoring: `df -h`, `du -h --max-depth=1`
+```bash
+df -h                      # filesystem-level usage
+du -sh /home/*             # size of each top-level folder under /home
+du -h --max-depth=1 /var   # per-dir usage under /var
+
 - Script: `/usr/local/bin/sys_monitor.sh`
+```bash
+cat > /usr/local/bin/sys_monitor.sh << 'EOF'
+#!/bin/bash
+set -euo pipefail
+
+DATE=$(date +"%Y-%m-%d_%H-%M-%S")
+LOG_DIR="/var/log/sys_monitor"
+LOG_FILE="$LOG_DIR/monitor_$DATE.log"
+
+mkdir -p "$LOG_DIR"
+
+{
+  echo "===== System Monitoring Report: $DATE ====="
+  echo
+  echo "--- CPU/Memory/Load (top snapshot) ---"
+  top -b -n1 | head -15
+  echo
+  echo "--- Disk Usage (df -h) ---"
+  df -h
+  echo
+  echo "--- Largest directories under / (depth 1) ---"
+  du -h --max-depth=1 / 2>/dev/null | sort -hr | head -15
+  echo
+  echo "--- Top 5 processes by Memory ---"
+  ps aux --sort=-%mem | head -6
+  echo
+  echo "--- Top 5 processes by CPU ---"
+  ps aux --sort=-%cpu | head -6
+} > "$LOG_FILE"
+EOF
+
+chmod +x /usr/local/bin/sys_monitor.sh
+
 - Logs: `/var/log/sys_monitor/monitor_YYYY-MM-DD_HH-MM-SS.log`
+```bash
+/usr/local/bin/sys_monitor.sh
+ls -lh /var/log/sys_monitor/
+
 - (Optional) Cron: `0 6 * * * /usr/local/bin/sys_monitor.sh`
+```bash
+crontab -e    # root's crontab
+# Add this line, save & exit:
+0 6 * * * /usr/local/bin/sys_monitor.sh
 
 ## Task 2 – Users & Access
 - Users: `Sarah` (home `/home/Sarah`), `Mike` (home `/home/Mike`)
