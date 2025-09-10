@@ -108,15 +108,14 @@
     ```bash
       yum install -y libpwquality
 
-    ```bash
       vi /etc/security/pwquality.conf
 
-    Set
-      minlen = 8
-      dcredit = -1   # require at least 1 digit
-      ucredit = -1   # require at least 1 uppercase
-      lcredit = -1   # require at least 1 lowercase
-      ocredit = -1   # require at least 1 special char
+  Set
+    minlen = 8
+    dcredit = -1   # require at least 1 digit
+    ucredit = -1   # require at least 1 uppercase
+    lcredit = -1   # require at least 1 lowercase
+    ocredit = -1   # require at least 1 special char
 
  
 ## Task 3 – Backups
