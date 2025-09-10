@@ -92,10 +92,10 @@
       ```bash
           vi /etc/login.defs
       
-  - Set these values
-        PASS_MAX_DAYS   30   # must change every 30 days
-        PASS_MIN_DAYS   7    # minimum 7 days before next change
-        PASS_WARN_AGE   7    # warn 7 days before expiry
+  - Set these values : 
+    - PASS_MAX_DAYS   30   # must change every 30 days
+    - PASS_MIN_DAYS   7    # minimum 7 days before next change
+    - PASS_WARN_AGE   7    # warn 7 days before expiry
 
   - `chage` applied to both users
       ```bash
@@ -110,12 +110,12 @@
 
       vi /etc/security/pwquality.conf
 
-  - Set
-    minlen = 8
-    dcredit = -1   # require at least 1 digit
-    ucredit = -1   # require at least 1 uppercase
-    lcredit = -1   # require at least 1 lowercase
-    ocredit = -1   # require at least 1 special char
+  - Set :
+    - minlen = 8
+    - dcredit = -1   # require at least 1 digit
+    - ucredit = -1   # require at least 1 uppercase
+    - lcredit = -1   # require at least 1 lowercase
+    - ocredit = -1   # require at least 1 special char
 
  
 ## Task 3 – Backups
@@ -186,8 +186,8 @@
     ```bash
         visudo -f /etc/sudoers.d/web-backups
 - Paste:
-        Sarah ALL=(root) NOPASSWD: /usr/local/bin/apache_backup.sh
-        Mike  ALL=(root) NOPASSWD: /usr/local/bin/nginx_backup.sh
+  - Sarah ALL=(root) NOPASSWD: /usr/local/bin/apache_backup.sh
+  - Mike  ALL=(root) NOPASSWD: /usr/local/bin/nginx_backup.sh
 
 - Crons:
   - Sarah: `0 0 * * 2 sudo /usr/local/bin/apache_backup.sh`
